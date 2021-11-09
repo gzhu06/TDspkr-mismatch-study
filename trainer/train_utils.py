@@ -125,8 +125,7 @@ def val_loss(classifier_model, wav_embed, spk_embed, dataloader_val, train_steps
 
         return loss_val, acc_val
 
-# def val_step(model, embed_model, testloader, trial_train, trial_val, best_eer, train_steps):
-def val_step(model, wav_embed, spk_embed, testloader, trial_val, best_acc, train_steps):
+def val_step(model, wav_embed, spk_embed, testloader, best_acc, train_steps):
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu") 
     
     model.eval()

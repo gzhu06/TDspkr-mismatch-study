@@ -16,14 +16,10 @@ import torch.nn.functional as F
 from torch.utils.data import Dataset, DataLoader
 import torch.optim as optim
 
-from torch.optim.lr_scheduler import StepLR
 from pytorch_model_summary import summary
 
 import importlib
-
-from evaluate.trials import trial_from_file
 from VoxDataset import VoxDataset
-
 import torch.multiprocessing as mp
 import torch.distributed as dist
 from apex.parallel import DistributedDataParallel as DDP
@@ -62,16 +58,6 @@ def train_and_eval(rank, n_gpus, config):
 
     dist.init_process_group(backend='nccl', init_method='env://', world_size=n_gpus, rank=rank)
     torch.cuda.set_device(rank)
-
-    # generate trial list
-    if rank == 0:
-        print('initialized device...')
-        print('generating trials...')
-        trial_file = os.path.join(config.list, 'veri_test2.txt')
-        trial_full = trial_from_file(trial_file, os.path.join(config.test_o, 'test'))
-        random.shuffle(trial_full)
-        trial_val = trial_full[:6400]
-        print('loading data...')
     
     # spk dictionary
     files, spk_ids = [], []
@@ -92,8 +78,7 @@ def train_and_eval(rank, n_gpus, config):
     print(len(files), no_of_speakers)
     
     # distribute dataloader
-    train_vox = VoxDataset(data_path=config.train_source, 
-                           labels_to_id=labels_to_id, 
+    train_vox = VoxDataset(data_path=config.train_source, labels_to_id=labels_to_id, 
                            seg_len=config.seg_len)
     val_num = int(0.01*len(train_vox))
     torch.manual_seed(2021)
@@ -134,12 +119,6 @@ def train_and_eval(rank, n_gpus, config):
             lr_ratio = 0.1
         
     elif config.optim == 'ADAM':
-#         optimizer_g = optim.Adam([{'params': wav_embedding.parameters()}, 
-#                                   {'params': spk_embedding.parameters(), 'weight_decay':1e-4}, 
-#                                   {'params': spk_classifier.parameters(), 'weight_decay':1e-4}],
-#                                  lr=config.lr)
-#         lr_ratio = 0.8
-        
         optimizer_g = optim.Adam([{'params': wav_embedding.parameters()}, 
                                   {'params': spk_embedding.parameters()}, 
                                   {'params': spk_classifier.parameters()}],
@@ -168,7 +147,7 @@ def train_and_eval(rank, n_gpus, config):
         iteration = int(epoch_point /(config.batch_size)) * (epoch_str) + 1
         epoch_str += 1
         
-        lr_p = int(epoch_str / 80)
+        lr_p = int(epoch_str / 120)
         optimizer_g.param_groups[0]['lr'] = config.lr * np.power(lr_ratio, lr_p)
         optimizer_g.param_groups[1]['lr'] = config.lr * np.power(lr_ratio, lr_p)
         optimizer_g.param_groups[2]['lr'] = config.lr * np.power(lr_ratio, lr_p)
@@ -218,6 +197,9 @@ def train_and_eval(rank, n_gpus, config):
             utt_embeddings = spk_embedding(wav_embedding(data))
             loss, softmax_output = spk_classifier(utt_embeddings, target)
             loss = loss.mean()
+            if configs.vd:
+                kld_loss = wav_embedding.module.tdfbanks.complex_conv.kld()
+                loss += kld_loss * 0.02
             
             # back propagation
             with amp.scale_loss(loss, optimizer_g) as scaled_loss:
@@ -228,12 +210,16 @@ def train_and_eval(rank, n_gpus, config):
             
             if rank==0:
                 train_acc = train_utils.accuracy(target, softmax_output)
-            
-                mesg = "Time:{0:.2f}, Epoch:{1}, Iteration:{2}, Loss:{3:.3f}, Train Accuracy:{4:.3f}, Learning Rate:{5:.1e}, {6:.1e}".format(time()-orig_time, epoch, iteration, loss.item(), train_acc, optimizer_g.param_groups[0]['lr'], optimizer_g.param_groups[1]['lr'])
+                if configs.vd:
+                    mesg = "Time:{0:.2f}, Epoch:{1}, Iter:{2}, Loss:{3:.3f}, kld Loss:{4:.3f}, Accuracy:{5:.3f}, LR:{6:.3f}, {7:.3f}".format(time()-orig_time, epoch, iteration, loss.item(), kld_loss.item(), train_acc, optimizer_g.param_groups[0]['lr'], optimizer_g.param_groups[1]['lr'])
+                else:
+                    mesg = "Time:{0:.2f}, Epoch:{1}, Iteration:{2}, Loss:{3:.3f}, Train Accuracy:{4:.3f}, Learning Rate:{5:.1e}, {6:.1e}".format(time()-orig_time, epoch, iteration, loss.item(), train_acc, optimizer_g.param_groups[0]['lr'], optimizer_g.param_groups[1]['lr'])
+
                 print(mesg)
             
                 with open(os.path.join(config.train_path, 'train_loss.txt'), "a") as f:
-                    f.write("{0},{1},{2}\n".format(iteration, loss.item(), train_acc))
+                    f.write("{0},{1},{2},{3}\n".format(iteration, loss.item(), 
+                                                       kld_loss.item(), train_acc))
             
             iteration += 1
         
@@ -249,7 +235,8 @@ def train_and_eval(rank, n_gpus, config):
                        '{0}/model_{1}_ckpt.pt'.format(config.train_path, epoch))
             best_acc = train_utils.val_step(spk_classifier, wav_embedding, 
                                             spk_embedding, val_dataloader, 
-                                            trial_val, best_acc, iteration)
+                                            best_acc, iteration)
+        
         
         if epoch in [128, 192]:
             optimizer_g.param_groups[0]['lr'] *= lr_ratio

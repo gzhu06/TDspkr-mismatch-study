@@ -18,7 +18,6 @@ data_arg.add_argument("-val_o", type=str, default=os.path.join(data_path, 'val')
 data_arg.add_argument("-sr", type=int, default=16000, help="sampling rate")
 data_arg.add_argument("-seg_len", type=float, default=3.9, help="duration of segments(s)")
 data_arg.add_argument("-eer_length", type=float, default=3.9, help="duration of eer computing segments(s)")
-# data_arg.add_argument("-filter_size", type=int, default=2, help="duration of segments(ms)")
 
 # Training Parameters
 train_arg = parser.add_argument_group('Training')
@@ -31,6 +30,7 @@ train_arg.add_argument('-epoch', type=int, default=30, help="number of epoch for
 train_arg.add_argument('-batch_size', type=int, default=128, help="batch size")
 train_arg.add_argument('-embed_dim', type=int, default=256, help="embedding vector dimension")
 train_arg.add_argument('-loss_type', type=str, default='softmaxloss', help="loss type for training")
+train_arg.add_argument("-vd", type=bool, help="whether use variational dropout")
 train_arg.add_argument('-final_layer', type=str, default='None', help="loss type for training")
 train_arg.add_argument('-optim', type=str, default='SGD', help="optimizer")
 train_arg.add_argument('-lr', type=float, default=0.01, help="learning rate")
@@ -40,7 +40,6 @@ train_arg.add_argument('-gpu_idx', type=str, default='0', help="gpu index")
 eva_arg = parser.add_argument_group('Evaluation')
 testpath = '/storage/ge/voxceleb/test'
 # testpath = '/data/ge/voxceleb/test'
-eva_arg.add_argument("-enroll", type=str, default=os.path.join(testpath, 'enroll'), help="enroll folder path with raw files")
 eva_arg.add_argument("-layer", type=str, default='fc2', help="layer name")
 eva_arg.add_argument("-eval", type=str, default=os.path.join(testpath, 'eval'), help="eval folder path with raw files")
 eva_arg.add_argument("-extract_dataset", type=str, default='vox2', help="dataset name for vector extraction")

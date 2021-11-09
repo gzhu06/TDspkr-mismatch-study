@@ -16,8 +16,6 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-from evaluate.eer_monitor import calculate_eer, calculate_minDCF
-
 import utils
 import plot_utils
 
@@ -37,17 +35,15 @@ def load_model(model_file):
     spk_embedding = frame_backend.architecture().cuda()
     
     from apex import amp
-    # Try if you want to boost up synthesis speed.
     [wav_embedding, spk_embedding], _ = amp.initialize([wav_embedding, spk_embedding], 
                                                        [], opt_level="O1")
 
     wav_embedding = nn.DataParallel(wav_embedding)
     spk_embedding = nn.DataParallel(spk_embedding)
     checkpoint = torch.load(model_file, map_location='cpu')
-#     checkpoint = torch.load(os.path.join(folder, 'model_' + model_idx + '.pt'), map_location='cpu')
+
     wav_embedding.load_state_dict(checkpoint['wav_embed_state_dict'])
     spk_embedding.load_state_dict(checkpoint['spk_embed_state_dict'])
-#     model.load_state_dict(checkpoint)
     return wav_embedding, spk_embedding
 
 def compute_embeddings(wav_model, spk_model, layer_names, device, batch_idx, files, vectorpath):
