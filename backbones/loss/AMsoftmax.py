@@ -18,7 +18,6 @@ class loss(nn.Module):
         self.margin = 0.35 if not margin else margin # 0.35 by default
         self.in_features = in_features
         self.out_features = out_features
-#         self.fc = nn.Linear(in_features, out_features, bias=False)
         
         self.W = nn.Parameter(torch.randn(in_features, out_features), requires_grad=True)
         nn.init.kaiming_uniform_(self.W, 0.25)
@@ -27,9 +26,7 @@ class loss(nn.Module):
         '''
         input shape (N, in_features)
         '''
-#         assert len(x) == len(labels)
-#         assert torch.min(labels) >= 0
-#         assert torch.max(labels) < self.out_features
+
         
         W = F.normalize(self.W, p=2, dim=0)  # weight normalization
         x = F.normalize(x, p=2, dim=1)       # feature normalization
