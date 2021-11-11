@@ -40,16 +40,17 @@ bash run_plda.sh 0
 
 ## Results
 
-(Update to the paper: we replace the original TDNN with [ECAPA-TDNN](https://arxiv.org/abs/2005.07143) ([implementation](https://github.com/lawlict/ECAPA-TDNN) basically it's A.2 model in Table.2 ) Notice that, we use log mel with 30 mel bins instead of 80 MFCCs in the original paper, which may cause this worse performance. Also, we did not apply adaptive score norm, data aug or cyclic lr with Adam. Results are based on cosine score, values in the table: EER (0.01 minDCF), interestingly, PLDA score is a little bit worse.) 
+(Update to the paper: we replace the original TDNN with [ECAPA-TDNN](https://arxiv.org/abs/2005.07143) ([implementation](https://github.com/lawlict/ECAPA-TDNN),denoted as ECAPA, Here we use A.2 model from Table 2 in the orginal paper.) Notice that, we use log mel with 30 mel bins instead of 80 MFCCs in the original paper, which may cause this worse result. Also, we did not apply adaptive score norm (will be updated later), various data aug or cyclic lr with Adam. Results are based on cosine score, values in the table: EER (0.01 minDCF), interestingly, PLDA score is a little bit worse.) 
 
-| Frontend   |Backbone           | Loss       |Vox1-O       | Vox1-E      |Vox1-H      | VOiCEs     |
-|------------|-------------------|------------|-------------|-------------|------------|------------|
-| log mel    |      TDNN (C=512) |AM-Softmax  | 2.26 (0.256)| 2.37 (0.279)| 4.14(0.408)|6.79 (0.553)|
-| log mel    |ECAPA-TDNN (C=512) |AM-Softmax  | 1.91        | 1.95		  | 3.31 	   |6.68 (0.469)|
-| log mel    |ECAPA-TDNN (C=1024)|AM-Softmax  |             |             |            |            |
-| log mel    |ECAPA-TDNN (C=512) |AAM-Softmax | 1.74 (0.194)| 1.82 (0.194)| 3.07(0.292)|6.39 (0.452)|
-| TDF-H-VD   |      TDNN (C=512) |AM-Softmax  | 1.99 (0.266)| 2.26 (0.253)| 3.93(0.385)|7.40 (0.633)|
-| TDF-H-VD   |ECAPA-TDNN (C=512) |AM-Softmax  | 1.6  (0.154)| 1.66 (0.173)| 2.86 (0.26)|7.95 (0.582)|
+| Frontend   |Backbone      | Loss       |Vox1-O       | Vox1-E      |Vox1-H      | VOiCEs     |
+|------------|--------------|------------|-------------|-------------|------------|------------|
+| log mel    | TDNN (C=512) |AM-Softmax  | 2.26 (0.256)| 2.37 (0.279)| 4.14(0.408)|6.79 (0.553)|
+| log mel    |ECAPA (C=512) |AM-Softmax  | 1.91        | 1.95		 | 3.31 	  |6.68 (0.469)|
+| log mel    |ECAPA (C=1024)|AM-Softmax  | 1.38 (0.146)| 1.51 (0.152)| 2.71(0.254)|6.60 (0.427)|
+| log mel    |ECAPA (C=512) |AAM-Softmax | 1.74 (0.194)| 1.82 (0.194)| 3.07(0.292)|6.39 (0.452)|
+| log mel    |ECAPA (C=1024)|AAM-Softmax |             |             |			  |			   |
+| TDF-H-VD   | TDNN (C=512) |AM-Softmax  | 1.99 (0.266)| 2.26 (0.253)| 3.93(0.385)|7.40 (0.633)|
+| TDF-H-VD   |ECAPA (C=512) |AM-Softmax  | 1.6  (0.154)| 1.66 (0.173)| 2.86 (0.26)|7.95 (0.582)|
 
 As can bee seen, although in-domain results are better, the mismatch still exists in out-of-domain data.
 
