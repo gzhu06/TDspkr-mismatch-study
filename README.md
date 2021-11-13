@@ -2,6 +2,18 @@
 Code base for "A study of the robustness of raw waveform based speaker embeddings under mismatched conditions" [https://arxiv.org/abs/2110.04265]
 Pretrained models will be uploaded soon.
 
+## Introduction
+
+Waveform based models are notorious for channel mismatch in speaker recognition due to densely sampled waveform. It's overwhelming for the neural networks to learn meaningful representations given guidence from scratch. 
+{:refdef: style="text-align: center;"}
+![mismatch](/doc/filter_scale.pdf){:width="500"}
+\
+Typical waveform based models:
+
+Common backbones (due to page limits, we didn't have space for this image):
+{:refdef: style="text-align: center;"}
+![commonbackbone](/doc/dsblock){:width="500"}
+\
 ## Requirements
 apex \
 kaldi \
