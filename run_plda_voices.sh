@@ -32,23 +32,6 @@ if [ $stage -le 1 ]; then
     done
 fi
 
-# if [ $stage -le 2 ]; then
-#     for embd_layer in a b; do
-#       $train_cmd $exp_folder/log/voices_plda.log \
-#         ivector-plda-scoring --normalize-length=true \
-#         "ivector-copy-plda --smoothing=0.0 $exp_folder/plda/plda_${embd_layer} - |" \
-#         "ark:ivector-subtract-global-mean $exp_folder/plda/mean_${embd_layer}.vec scp:$exp_folder/plda/voices/xvector_${embd_layer}.scp ark:- | ivector-normalize-length ark:- ark:- |" "ark:ivector-subtract-global-mean $exp_folder/plda/mean_${embd_layer}.vec scp:$exp_folder/plda/voices/xvector_${embd_layer}.scp ark:- | ivector-normalize-length ark:- ark:- |" "cat '$voices_trials' | cut -d\  --fields=1,2 |" $exp_folder/log/plda_voices
-
-#       eer=`compute-eer <($KALDI_ROOT/egs/voxceleb/pytorch/local/prepare_for_eer.py $voices_trials $exp_folder/log/plda_voices) 2> /dev/null`
-#       mindcf1=`$KALDI_ROOT/egs/voxceleb/pytorch/sid/compute_min_dcf.py --p-target 0.01 $exp_folder/log/plda_voices $voices_trials 2> /dev/null`
-#       mindcf2=`$KALDI_ROOT/egs/voxceleb/pytorch/sid/compute_min_dcf.py --p-target 0.001 $exp_folder/log/plda_voices $voices_trials 2> /dev/null`
-#       echo "layer: ${embd_layer}"
-#       echo "plda EER: $eer%"
-#       echo "minDCF(p-target=0.01): $mindcf1"
-#       echo "minDCF(p-target=0.001): $mindcf2"
-#     done
-# fi
-
 if [ $stage -le 2 ]; then
     for embd_layer in a; do
       $train_cmd $exp_folder/log/voices_ldaplda.log \

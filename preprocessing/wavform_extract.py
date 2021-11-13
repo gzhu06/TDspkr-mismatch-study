@@ -12,6 +12,7 @@ from multiprocessing import Pool
 from tqdm import tqdm
 from time import time
 import argparse
+import random
 
 import preprocessing.silence_detector 
 
@@ -21,36 +22,28 @@ args = parser.parse_args()
 
 config = utils.Params(args.config_file)
 
-def find_files(directory, pattern='**/*.wav'):
+def find_files(directory, sample_num=None, pattern='**/*.wav'):
     print(os.path.join(directory, pattern))
-    return glob(os.path.join(directory, pattern), recursive=True)
-
-def VAD(audio):
-    chunk_size = int(config.sr * 0.05) # 50ms
-    index = 0
-    sil_detector = preprocessing.silence_detector.SilenceDetector(9)
-    nonsil_audio=[]
-    while index + chunk_size < len(audio):
-        if not sil_detector.is_silence(audio[index: index+chunk_size]):
-            nonsil_audio.extend(audio[index: index + chunk_size])
-        index += chunk_size
-
-    return np.array(nonsil_audio)
+    all_files = glob(os.path.join(directory, pattern), recursive=True)
+    if sample_num is not None:
+        sampled_files = random.sample(all_files, sample_num)
+    else:
+        sampled_files = glob(os.path.join(directory, pattern), recursive=True)
+    print(len(sampled_files))
+    return sampled_files
 
 def read_audio(filename, sample_rate=config.sr):
-    import soundfile as sf
-#     audio, sr = sf.read(filename, samplerate=config.sr)
     audio, sr = librosa.load(filename, sr=sample_rate, mono=True)
-#     audio = librosa.util.normalize(audio)
     return audio
 
 def features(libri, out_dir=config.train_o, name='0'):
 
     for i in tqdm(range(len(libri))):
         filename = libri[i:i+1]['filename'].values[0]        
-        
         target_filename_partial = os.path.join(out_dir, filename.split("/")[-3] + '-' + filename.split("/")[-2] + '-' + filename.split("/")[-1].split('.')[0])  #clean
 #         target_filename_partial = os.path.join(out_dir, filename.split("/")[-1].split(".")[0])  # librispeech clean
+        # target_filename_partial = os.path.join(out_dir, filename.split("/")[-1].split('.')[0]) 
+        # target_filename_partial = os.path.join(out_dir, filename.split("/")[-3] + '-' + filename.split("/")[-2] + '-' + filename.split("/")[-1].split('.')[0])  #clean
         try:
             raw_audio = read_audio(filename)
         except:
