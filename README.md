@@ -5,15 +5,19 @@ Pretrained models will be uploaded soon.
 ## Introduction
 
 Waveform based models are notorious for channel mismatch in speaker recognition due to densely sampled waveform. It's overwhelming for the neural networks to learn meaningful representations given guidence from scratch. 
-{:refdef: style="text-align: center;"}
-![mismatch](./doc/filter_scale.png){:width="500"}
-\
+
+<p align="center">
+<img align="center" src="doc/filter_scale.png", width=400>
+<p>
+ 
 Typical waveform based models:
 
 Common backbones (due to page limits, we didn't have space for this image):
-{:refdef: style="text-align: center;"}
-![commonbackbone](./doc/dsblock.png){:width="500"}
-\
+
+<p align="center">
+<img align="center" src="doc/dsblock.png", width=450>
+<p>
+ 
 ## Requirements
 apex \
 kaldi \
