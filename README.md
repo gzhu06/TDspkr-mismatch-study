@@ -52,10 +52,10 @@ bash run.sh
 ```
 bash run_plda.sh 0
 ```
-
-### Step 4: Adaptive score normalization
-
-Please see ```snorm.ipynb```.
+and 
+```
+bash run_plda_voices.sh 0
+```
 
 ## Results
 

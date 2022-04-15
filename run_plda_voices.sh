@@ -1,17 +1,17 @@
 . ./cmd.sh
 . ./path.sh
 
-exp_folder=./experiments/tdfbank-yvector-vd
-architecture=tdfbank-yvector-vd
+exp_folder=./experiments/tdfbank-ana-yvector-vd-ecapa
+architecture=tdfbank-ana-vd-yvector
 
-gpu=2
+gpu=3
 multi_proc=1
 stage=$1
 voices_trials=./trials/voices
 
 if [ $stage -le 0 ]; then
 
-    python main.py -stage 4 -train_path $exp_folder -gpu_idx $gpu -wavencoder $architecture -backbone TDNN -batch_size 64 -lr 0.005 -loss_type AMsoftmax -embed_dim 512 -epoch 360 -seg_len 3.9 -optim SGD -eer_length 3.9 -train_source /storageNVME/ge/voices/eval -eval_njob $multi_proc -extract_dataset voices
+    python main.py -stage 4 -train_path $exp_folder -gpu_idx $gpu -wavencoder $architecture -backbone ECAPA-TDNN -batch_size 64 -lr 0.005 -loss_type AMsoftmax -embed_dim 512 -epoch 360 -seg_len 3.9 -optim SGD -eer_length 3.9 -train_source /storageNVME/ge/voices/eval -eval_njob $multi_proc -extract_dataset voices
     
 fi
 
