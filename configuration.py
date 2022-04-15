@@ -11,12 +11,10 @@ def get_config():
 rawdatapath = '/storage/ge/voxceleb2'
 data_path = '/storageNVME/ge/voxceleb2'
 data_arg = parser.add_argument_group('Data')
-data_arg.add_argument("-train_i", type=str, default=os.path.join(rawdatapath, 'dev', 'aac'), help="input folder path with raw files")
-data_arg.add_argument("-train_o", type=str, default=os.path.join(data_path, 'train'), help="output folder with data")
-data_arg.add_argument("-val_i", type=str, default=os.path.join(rawdatapath, 'test', 'aac'), help="input folder path with raw files")
-data_arg.add_argument("-val_o", type=str, default=os.path.join(data_path, 'val'), help="output folder with data")
+data_arg.add_argument("-data_i", type=str, default=os.path.join(rawdatapath, 'dev', 'aac'), help="input folder path with raw files")
+data_arg.add_argument("-data_o", type=str, default=os.path.join(data_path, 'train'), help="output folder with feature data")
 data_arg.add_argument("-sr", type=int, default=16000, help="sampling rate")
-data_arg.add_argument("-seg_len", type=float, default=3.9, help="duration of segments(s)")
+data_arg.add_argument("-seg_len", type=float, default=3.9, help="minimum duration of segments(s)")
 data_arg.add_argument("-eer_length", type=float, default=3.9, help="duration of eer computing segments(s)")
 
 # Training Parameters

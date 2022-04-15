@@ -24,18 +24,13 @@ if __name__ == '__main__':
     
     # create parameter file
     params_file = os.path.join(config.train_path, 'parameters.json')
+    os.makedirs(config.train_path, exist_ok=True)
     parser_exp = saveparser(params_file, parser)
     
     # feature stage
     if config.stage == 0:
         run_cmd = 'python preprocessing/wavform_extract.py ' + '-config_file ' + params_file
-        
-    if config.stage == 0.1:
-        run_cmd = 'python preprocessing/wavform_extract_voices.py ' + '-config_file ' + params_file
 
-    if config.stage == 0.3:
-        run_cmd = 'python preprocessing/wavform_extract_noisyvox.py ' + '-config_file ' + params_file
-    
     # apex train stage
     if config.stage == 1:
         run_cmd = 'python trainer/train_apex.py ' + '-config_file ' + params_file
