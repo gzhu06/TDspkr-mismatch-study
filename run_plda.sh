@@ -1,8 +1,8 @@
 . ./cmd.sh
 . ./path.sh
 
-exp_folder=./experiments/
-architecture=
+exp_folder=./experiments/tdfbank-ana-yvector-vd-ecapa
+frontend=tdfbank-ana-vd-yvector
 
 gpu=3
 multi_proc=1
@@ -11,9 +11,9 @@ voxceleb1_trials=./trials/vox1o
 
 if [ $stage -le 0 ]; then
     
-    python main.py -stage 4 -train_path $exp_folder -gpu_idx $gpu -wavencoder $architecture -backbone TDNN -seg_len 3.9 -optim SGD -eer_length 3.9 -train_source /storageNVME/ge/voxceleb2/train -train_source /storageNVME/ge/voxceleb2noisy100k/train -eval_njob $multi_proc -extract_dataset vox2
+    python main.py -stage 4 -train_path $exp_folder -gpu_idx $gpu -wavencoder $frontend -backbone ECAPA-TDNN -seg_len 3.9 -optim SGD -eer_length 3.9 -train_source /storageNVME/ge/voxceleb2/train -train_source /storageNVME/ge/voxceleb2noisy100k/train -eval_njob $multi_proc -extract_dataset vox2
     
-    python main.py -stage 4 -train_path $exp_folder -gpu_idx $gpu -wavencoder $architecture -backbone TDNN -seg_len 3.9 -optim SGD -eer_length 3.9 -train_source /storageNVME/ge/voxceleb/train -train_source /storageNVME/ge/voxceleb/test -train_source /storageNVME/ge/voxceleb/val -eval_njob $multi_proc -extract_dataset vox1
+    python main.py -stage 4 -train_path $exp_folder -gpu_idx $gpu -wavencoder $frontend -backbone ECAPA-TDNN -seg_len 3.9 -optim SGD -eer_length 3.9 -train_source /storageNVME/ge/voxceleb/train -train_source /storageNVME/ge/voxceleb/test -train_source /storageNVME/ge/voxceleb/val -eval_njob $multi_proc -extract_dataset vox1
     
 fi
 

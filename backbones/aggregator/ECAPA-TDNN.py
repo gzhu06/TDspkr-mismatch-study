@@ -44,8 +44,6 @@ class Res2Conv1dReluBn(nn.Module):
         out = torch.cat(out, dim=1)
         return out
 
-
-
 ''' Conv1d + BatchNorm1d + ReLU
 '''
 class Conv1dReluBn(nn.Module):
@@ -56,8 +54,6 @@ class Conv1dReluBn(nn.Module):
 
     def forward(self, x):
         return self.bn(F.relu(self.conv(x)))
-
-
 
 ''' The SE connection of 1D case.
 '''
@@ -75,8 +71,6 @@ class SE_Connect(nn.Module):
         out = x * out.unsqueeze(2)
         return out
 
-
-
 ''' SE-Res2Block.
     Note: residual connection is implemented in the ECAPA_TDNN model, not here.
 '''
@@ -87,8 +81,6 @@ def SE_Res2Block(channels, kernel_size, stride, padding, dilation, scale):
         Conv1dReluBn(channels, channels, kernel_size=1, stride=1, padding=0),
         SE_Connect(channels)
     )
-
-
 
 ''' Attentive weighted mean and standard deviation pooling.
 '''
@@ -107,8 +99,6 @@ class AttentiveStatsPool(nn.Module):
         residuals = torch.sum(alpha * x ** 2, dim=2) - mean ** 2
         std = torch.sqrt(residuals.clamp(min=1e-9))
         return torch.cat([mean, std], dim=1)
-
-
 
 ''' Implementation of
     "ECAPA-TDNN: Emphasized Channel Attention, Propagation and Aggregation in TDNN Based Speaker Verification".

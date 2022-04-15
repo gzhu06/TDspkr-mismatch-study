@@ -17,7 +17,6 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 import utils
-import plot_utils
 
 from torch.multiprocessing import Pool, Process, set_start_method
 torch.multiprocessing.set_start_method('spawn', force=True)
@@ -89,7 +88,7 @@ if __name__ == '__main__':
     print(model_path)
     division = config.eval_njob
 
-    layerNames = ['module.tdnn_aggregator.fc1', 'module.tdnn_aggregator.fc2']
+    layerNames = ['module.tdnn_aggregator.linear', 'module.tdnn_aggregator.bn2']
     
     # prepare train dataset
     files = []
