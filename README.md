@@ -1,22 +1,21 @@
-# Robustness-of-raw-speaker-embedding (Under Development)
+# Robustness-of-raw-speaker-embedding 
+
 Code base for "A study of the robustness of raw waveform based speaker embeddings under mismatched conditions" [https://arxiv.org/abs/2110.04265]
-Pretrained models will be uploaded soon.
 
 ## Introduction
 
-Waveform based models are notorious for channel mismatch in speaker recognition due to densely sampled waveform. It's overwhelming for the neural networks to learn meaningful representations given guidence from scratch. 
+Waveform based models are notorious for being less robust in speaker recognition compared to spectral based methods. It's overwhelming for the neural networks to learn meaningful representations from such densely sampled data from scratch. There are two main strategies in prior works:
+* Parametric learnable filterbanks, introduce inductive bias into the filterbank learning process; SincNet, LEAF etc.
+* Non-parametric learnable filterbanks with regularizations, such as Gabor initialization, multi-scale analysis, learnable compression functions and complex convolution.
 
-<p align="center">
-<img align="center" src="doc/filter_scale.png", width=400>
-<p>
- 
-Typical waveform based models:
+Even with these strategies, we still observe a performance degrade in channel mismatch scenario:
+<p align="center"><img align="center" src="doc/filter_scale.png", width=400></p>
 
-Common backbones (due to page limits, we didn't have space for this image):
+In the above experiments, we compare different filterbank frontend with a common backbone (due to page limits, we didn't have space for this image):
 
-<p align="center">
-<img align="center" src="doc/dsblock.png", width=450>
-<p>
+<p align="center"><img align="center" src="doc/dsblock.png", width=450></p>
+
+In this project, we propose two strategies to alleviate this problem, one is to introduce analyticity and the other is to apply variational dropout. 
  
 ## Requirements
 apex \

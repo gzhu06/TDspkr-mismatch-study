@@ -53,8 +53,9 @@ def train_and_eval(rank, n_gpus, config):
 
     train_steps = 0
     epoch_point = 120000
-    
+    l2_reg = False # in Y-vector case, it's true
     best_acc = 0
+    vd = True if 'vd' in config.wavencoder else False
 
     dist.init_process_group(backend='nccl', init_method='env://', world_size=n_gpus, rank=rank)
     torch.cuda.set_device(rank)
@@ -197,7 +198,7 @@ def train_and_eval(rank, n_gpus, config):
             utt_embeddings = spk_embedding(wav_embedding(data))
             loss, softmax_output = spk_classifier(utt_embeddings, target)
             loss = loss.mean()
-            if configs.vd:
+            if vd:
                 kld_loss = wav_embedding.module.tdfbanks.complex_conv.kld()
                 loss += kld_loss * 0.02
             
@@ -210,7 +211,7 @@ def train_and_eval(rank, n_gpus, config):
             
             if rank==0:
                 train_acc = train_utils.accuracy(target, softmax_output)
-                if configs.vd:
+                if vd:
                     mesg = "Time:{0:.2f}, Epoch:{1}, Iter:{2}, Loss:{3:.3f}, kld Loss:{4:.3f}, Accuracy:{5:.3f}, LR:{6:.3f}, {7:.3f}".format(time()-orig_time, epoch, iteration, loss.item(), kld_loss.item(), train_acc, optimizer_g.param_groups[0]['lr'], optimizer_g.param_groups[1]['lr'])
                 else:
                     mesg = "Time:{0:.2f}, Epoch:{1}, Iteration:{2}, Loss:{3:.3f}, Train Accuracy:{4:.3f}, Learning Rate:{5:.1e}, {6:.1e}".format(time()-orig_time, epoch, iteration, loss.item(), train_acc, optimizer_g.param_groups[0]['lr'], optimizer_g.param_groups[1]['lr'])

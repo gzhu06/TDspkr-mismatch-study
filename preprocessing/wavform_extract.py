@@ -49,9 +49,7 @@ def features(libri, out_dir=config.data_o, name='0'):
     for i in tqdm(range(len(libri))):
         filename = libri[i:i+1]['filename'].values[0]        
         target_filename_partial = os.path.join(out_dir, filename.split("/")[-3] + '-' + filename.split("/")[-2] + '-' + filename.split("/")[-1].split('.')[0])  #clean
-#         target_filename_partial = os.path.join(out_dir, filename.split("/")[-1].split(".")[0])  # librispeech clean
-        # target_filename_partial = os.path.join(out_dir, filename.split("/")[-1].split('.')[0]) 
-        # target_filename_partial = os.path.join(out_dir, filename.split("/")[-3] + '-' + filename.split("/")[-2] + '-' + filename.split("/")[-1].split('.')[0])  #clean
+
         try:
             raw_audio = read_audio(filename)
         except:

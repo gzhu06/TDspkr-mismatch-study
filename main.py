@@ -35,10 +35,6 @@ if __name__ == '__main__':
     if config.stage == 1:
         run_cmd = 'python trainer/train_apex.py ' + '-config_file ' + params_file
 
-     # apex train stage with cyc lr
-    if config.stage == 1.5:
-        run_cmd = 'python trainer/train_apex_vd.py ' + '-config_file ' + params_file
-        
     if config.stage == 4:
         run_cmd = 'python evaluate/extract_vector.py ' + '-config_file ' + params_file
     

@@ -14,7 +14,6 @@ from torch.nn import functional as F
 from torch.autograd import Variable
 import torch.fft as fft
 from backbones.wavencoder.frontend_utils import norm_block, Fp32GroupNorm, DSTCNBlock, ConvDS
-from backbones.wavencoder.tdfbank import Gabor, window
 
 EPSILON = torch.finfo(torch.float32).eps
 def window(window_type, N):
